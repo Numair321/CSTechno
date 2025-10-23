@@ -67,6 +67,9 @@ npm start
 
 ## 4. Usage
 - Register/login as an admin.
+- use credential
+- username: maliknumair21@gmail.com
+- passowrd: admin123
 - Add agents.
 - Upload CSV/XLSX/XLS files with columns: `FirstName`, `Phone`, `Notes`.
 - Distribute and view leads per agent.
