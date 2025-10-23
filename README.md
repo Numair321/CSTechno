@@ -33,7 +33,7 @@ npm install
 ```
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/csTech
-JWT_SECRET=a9f8e4b36c76b8e23f1d8a4b9c29a875cd34e2ab8a3f9f5cb76a81cbd9f1e3a6e3d42f7a82e7a9a6
+JWT_SECRET=your_jwt_secret
 
 
 ```
