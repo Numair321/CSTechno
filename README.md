@@ -102,4 +102,4 @@ CSTech/
 ---
 
 ## 8. Contact
-For issues, contact the project maintainer or open an issue in the repository.
+For issues, contact  maliknumair21@gmail.com or 8299656660.
