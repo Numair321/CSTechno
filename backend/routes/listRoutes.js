@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter
+ 
 const fileFilter = (req, file, cb) => {
   // Check file type
   if (file.originalname.match(/\.(csv|xlsx|xls)$/)) {
@@ -28,13 +28,12 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit to match frontend
+    fileSize: 10 * 1024 * 1024,  
   }
 });
 
 const router = express.Router();
-
-// Simple logging middleware to confirm endpoint hits
+ 
 const logUploadRequest = (req, res, next) => {
   console.log(`Upload endpoint hit by user: ${req.user ? req.user.email : 'unknown'}`);
   next();

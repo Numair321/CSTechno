@@ -29,16 +29,14 @@ export default function UploadList() {
       });
       
       setLists(Array.isArray(res.data) ? res.data : []);
-      setRetryCount(0); // Reset retry count on success
+      setRetryCount(0);  
     } catch (err) {
       console.error('Error fetching lists:', err);
-      
-      // Handle specific error cases
+ 
       if (err.response) {
-        // Server responded with an error
         if (err.response.status === 401) {
           setError('Please log in again to continue');
-          // Let the axios interceptor handle the redirect
+           
         } else {
           setError(err.response.data?.message || 'Server error while fetching lists');
         }
@@ -68,7 +66,7 @@ export default function UploadList() {
       return;
     }
 
-    // Quick pre-check to ensure server is reachable before uploading large files
+ 
     try {
       await API.get('/health', { timeout: 5000 });
     } catch (pingErr) {
@@ -76,8 +74,7 @@ export default function UploadList() {
       setError('Unable to connect to server. Please check your connection and refresh the page.');
       return;
     }
-
-    // Validate file size (10MB limit)
+ 
     const maxSize = 10 * 1024 * 1024; // 10MB in bytes
     if (file.size > maxSize) {
       setError(`File size too large. Maximum size allowed is 10MB`);
@@ -103,15 +100,14 @@ export default function UploadList() {
       try {
         setError('');
         setMessage(`Uploading file... Attempt ${retryCount + 1}/${maxRetries}`);
-        
-        // Let the browser set the Content-Type (including boundary) for FormData
+         
         const res = await API.post('/lists/upload', formData, {
-          timeout: 60000, // Increased timeout for large files
+          timeout: 60000,  
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
             setMessage(`Uploading: ${percentCompleted}%`);
           },
-          // Retry on network errors
+        
           validateStatus: function (status) {
             return status >= 200 && status < 500;
           }
@@ -122,8 +118,8 @@ export default function UploadList() {
         }
 
         setMessage(res.data.message || 'File uploaded and distributed successfully');
-        setFile(null); // Clear the file input
-        await fetchLists(); // Refresh the lists after upload
+        setFile(null);  
+        await fetchLists();  
         return true;
       } catch (err) {
         console.error('Upload attempt failed:', err);
@@ -136,13 +132,10 @@ export default function UploadList() {
         
         setMessage('');
         if (err.response) {
-          // Server responded with error
           setError(err.response.data.message || err.response.data.details || 'Upload failed: Server error');
         } else if (err.request) {
-          // Request was made but no response
           setError('Upload failed: No response from server. Please check your connection and try again.');
         } else {
-          // Error in request setup
           setError(`Upload failed: ${err.message}`);
         }
         return false;
@@ -199,8 +192,8 @@ export default function UploadList() {
               onChange={(e) => {
                 if (e.target.files && e.target.files[0]) {
                   setFile(e.target.files[0]);
-                  setError(''); // Clear any previous errors
-                  setMessage(''); // Clear any previous messages
+                  setError('');  
+                  setMessage(''); 
                 }
               }}
               style={{
@@ -210,7 +203,7 @@ export default function UploadList() {
                 marginBottom: '20px',
                 cursor: 'pointer'
               }}
-              // Reset the input when file is cleared
+              
               key={file ? file.name : 'no-file'}
             />
             {file && (

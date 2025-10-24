@@ -21,7 +21,7 @@ export default function Agents() {
     } catch (err) {
       console.error('Error fetching agents:', err);
       setError(err.response?.data?.message || 'Failed to fetch agents');
-      setAgents([]); // Reset to empty array on error
+      setAgents([]);  
     } finally {
       setIsLoading(false);
     }
@@ -41,7 +41,6 @@ export default function Agents() {
       const response = await API.post('/agents', form);
       
       if (response.data.agent) {
-          // Reset form and fetch updated list
           setForm({ name: '', email: '', mobile: '', password: '' });
           await fetchAgents();
         

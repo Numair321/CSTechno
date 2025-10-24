@@ -22,8 +22,6 @@ export const addAgent = async (req, res) => {
 
     // Hash password
     const hashed = await bcrypt.hash(password, 10);
-
-    // Create and save new agent
     const agent = new Agent({ 
       name, 
       email, 
@@ -33,8 +31,6 @@ export const addAgent = async (req, res) => {
 
     const savedAgent = await agent.save();
     console.log('New agent created:', savedAgent._id);
-
-    // Return success without password
     const { password: _, ...agentWithoutPassword } = savedAgent.toObject();
     res.status(201).json({ 
       message: "Agent added successfully",

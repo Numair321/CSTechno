@@ -66,8 +66,7 @@ const validateFileType = (filename) => {
   if (!filename) {
     throw new Error('No filename provided');
   }
-
-  // Get file extension and convert to lowercase
+ 
   const ext = filename.toLowerCase().split('.').pop();
   const allowedExtensions = ['csv', 'xlsx', 'xls'];
   
@@ -91,20 +90,14 @@ const validateCSVFormat = (records) => {
     throw new Error('The file is empty. Please upload a file with data.');
   }
 
-  // Check for required columns in first record
   const firstRecord = records[0];
   if (!firstRecord || typeof firstRecord !== 'object') {
     throw new Error('Invalid record format: expected an object with properties');
   }
-
-  // Define possible column names (case-insensitive)
   const possibleFirstNameColumns = ['FirstName', 'firstname', 'first_name', 'Name', 'name'];
   const possiblePhoneColumns = ['Phone', 'phone', 'contact', 'mobile', 'Mobile', 'PhoneNumber'];
-
-  // Convert record keys to lowercase for case-insensitive comparison
   const recordColumns = Object.keys(firstRecord).map(key => key.toLowerCase());
-  
-  // Find matching columns
+   
   const foundNameColumn = Object.keys(firstRecord).find(key => 
     possibleFirstNameColumns.map(col => col.toLowerCase()).includes(key.toLowerCase())
   );
@@ -191,17 +184,15 @@ export const uploadList = async (req, res) => {
           const results = [];
           let stream;
           try {
-            // Use csv-parser with header normalization (trim + lowercase) and value trimming
+             
             stream = fs.createReadStream(file.path, { encoding: 'utf-8' })
               .pipe(csv({
                 mapHeaders: ({ header }) => header ? header.trim().toLowerCase() : header,
                 mapValues: ({ header, index, value }) => (typeof value === 'string' ? value.trim() : value),
                 skipLines: 0
               }));
-
-            // Collect rows
+ 
             stream.on("data", (row) => {
-              // row keys are normalized to lowercase header names
               results.push(row);
             });
 
@@ -222,18 +213,11 @@ export const uploadList = async (req, res) => {
             reject(streamError);
           }
         });
-
-        // Basic structure check - just ensure we have some data
         if (!records || records.length === 0) {
           throw new Error('The file appears to be empty');
         }
-
-        // Log the first record for debugging
         console.log('First raw normalized record:', records[0]);
-
-        // Normalize each row into our target shape using lowercase keys
         records = records.map((row, index) => {
-          // row keys are normalized (lowercase, trimmed)
           const firstName = row.firstname || row['first name'] || row.name || '';
           const phone = row.phone || row.phonenumber || row['phone number'] || row.contact || row.mobile || '';
           const notes = row.notes || row.description || '';
@@ -296,11 +280,7 @@ export const uploadList = async (req, res) => {
       fs.unlinkSync(file.path);
       return res.status(400).json({ message: "The file is empty" });
     }
-
-    // Log the first record to check structure
     console.log('First record structure:', records[0]);
-
-    // Validate required columns
     if (!records || records.length === 0) {
       fs.unlinkSync(file.path);
       return res.status(400).json({
@@ -311,12 +291,8 @@ export const uploadList = async (req, res) => {
 
     const firstRecord = records[0];
     console.log('Available columns in file:', Object.keys(firstRecord));
-
-    // Define possible column names (case-insensitive)
     const possibleFirstNameColumns = ['FirstName', 'firstname', 'first_name', 'Name', 'name'];
-    const possiblePhoneColumns = ['Phone', 'phone', 'contact', 'mobile', 'Mobile', 'PhoneNumber'];
-
-    // Convert all keys to lowercase for case-insensitive comparison
+    const possiblePhoneColumns = ['Phone', 'phone', 'contact', 'mobile', 'Mobile', 'PhoneNumber']; 
     const recordKeys = Object.keys(firstRecord).map(key => key.toLowerCase());
     console.log('Lowercase record keys:', recordKeys);
 
@@ -343,9 +319,7 @@ export const uploadList = async (req, res) => {
       });
     }
 
-    // Transform records to match our schema, preserving values from previously mapped records
     const transformedRecords = records.map(record => {
-      // If record already has firstName/phone/notes keys, use them
       if (record.firstName || record.phone || record.notes) {
         return {
           firstName: record.firstName || record.FirstName || record.firstname || record['First Name'] || '',
@@ -353,8 +327,6 @@ export const uploadList = async (req, res) => {
           notes: record.notes || record.Notes || record.description || record.Description || ''
         };
       }
-
-      // Otherwise, use detected column names
       const detectedFirst = record[foundFirstNameColumn] || record.FirstName || record.firstname || record['First Name'] || record.Name || '';
       const detectedPhone = record[foundPhoneColumn] || record.Phone || record.phone || record.contact || record.PhoneNumber || '';
       const notesKey = Object.keys(record).find(key => ['Notes', 'notes', 'description', 'Description'].map(n => n.toLowerCase()).includes(key.toLowerCase()));
