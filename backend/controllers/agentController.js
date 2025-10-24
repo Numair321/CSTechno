@@ -44,7 +44,7 @@ export const addAgent = async (req, res) => {
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
-};
+};   
 
 export const getAgents = async (req, res) => {
   try {
